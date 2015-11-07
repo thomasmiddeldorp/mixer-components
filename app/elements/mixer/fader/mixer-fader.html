@@ -1,0 +1,49 @@
+<link rel="import" href="../../../../bower_components/iron-range-behavior/iron-range-behavior.html">
+
+<dom-module id="mixer-fader">
+    <template>
+        <link rel="stylesheet" href="mixer-fader.css">
+
+        <div class="fader-box">
+            <div class="fader-track"></div>
+            <div id="handle" class="fader-handle"></div>
+        </div>
+    </template>
+
+
+    <script>
+        Polymer({
+            is: 'mixer-fader',
+            behaviors: [Polymer.IronRangeBehavior],
+            properties: {
+                min: Number,
+                max: Number,
+                value: Number
+            },
+            listeners: {
+                'handle.track': 'handleTrack'
+            },
+            ready: function () {
+                this.setScrollDirection('y');
+            },
+            handleTrack: function (e, detail) {
+                var tracking = detail.state !== 'end';
+                this.toggleClass('dragging-fader-handle', tracking);
+
+
+                this.positionHandle(this.calcRatio(detail.dy));
+                if(!tracking) {
+                    console.log(detail.dy);
+                }
+            },
+            positionHandle: function (ratio) {
+                var currentValue = this.calculateHandlePosition(ratio);
+
+                this.$.handle.style.bottom = -ratio + 'px';
+            },
+            calculateHandlePosition: function (ratio) {
+                return (this.max - this.min) * ratio + this.min;
+            }
+        })
+    </script>
+</dom-module>
